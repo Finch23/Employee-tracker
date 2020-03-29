@@ -1,5 +1,4 @@
 const inquirer = require("inquirer");
-const myFuncs = require('./functions/index');
 const mysql = require("mysql");
 
 var connection = mysql.createConnection({
@@ -44,15 +43,15 @@ inquirer
   .then(function(answer) {
     switch (answer.action) {
     case 'View all employees':
-      myFuncs.viewEmployee();
+      viewEmployee();
       break;
 
     case 'View all departments':
-      myFuncs.viewDepartment();
+      viewDepartment();
       break;
 
     case 'view all roles':
-      myFuncs.viewRoles();
+      viewRoles();
       break;
 
     case 'Add a department':
@@ -78,4 +77,70 @@ inquirer
   });
 }
 
-module.exports = connection;
+function viewEmployee() {
+  connection.query('select * from employee', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    runSearch();
+  });
+}
+
+function viewDepartment() {
+  connection.query('select * from department', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    runSearch();
+  })
+}
+
+function viewRoles() {
+  connection.query('select * from roles', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    runSearch();
+  })
+}
+
+function addDepartment() {
+inquirer
+  .prompt({
+    name: 'newDep',
+    type: 'input',
+    message: 'What department would you like to add?'
+  })
+  .then(function(answer) {
+    var query = 'insert into department set ?';
+
+    connection.query(query, {name: answer.newDep}, function(err, res) {
+      if (err) throw err;
+      console.log(`Department Added!! ${res.affectedRows}`);
+      runSearch();
+    });
+  });
+}
+
+function addRole() {
+  inquirer
+    .prompt({
+      name: 'newRole',
+      type: 'input',
+      message: 'What Role would you like to add?'
+    })
+    .then(function(answer) {
+      var query = 'insert into roles set ?';
+  
+      connection.query(query, {name: answer.newRole}, function(err, res) {
+        if (err) throw err;
+        console.log(`Role Added! ${res.affectedRows}`)
+        runSearch();
+      });
+    });
+  }
+  
+
