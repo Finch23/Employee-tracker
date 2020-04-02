@@ -50,7 +50,7 @@ inquirer
       viewDepartment();
       break;
 
-    case 'view all roles':
+    case 'View all roles':
       viewRoles();
       break;
 
@@ -126,21 +126,174 @@ inquirer
 }
 
 function addRole() {
+connection.query('select * from department', (err, res) => {
+  if (err) throw err;
   inquirer
-    .prompt({
-      name: 'newRole',
+    .prompt([
+      {
+      name: 'title',
       type: 'input',
       message: 'What Role would you like to add?'
-    })
+      },
+      {
+      name: 'salary',
+      type: 'number',
+      message: "What is this Role's yearly salary"
+      },
+      {
+        name: 'department',
+        type: 'list',
+        message: "What is the department?",
+        choices: () => {
+          var arr = [];
+          for (var i = 0; i < res.length; i ++) {
+            arr.push(res[i].name);
+          }
+          return arr;
+        }
+      }
+    ])
     .then(function(answer) {
-      var query = 'insert into roles set ?';
-  
-      connection.query(query, {name: answer.newRole}, function(err, res) {
-        if (err) throw err;
-        console.log(`Role Added! ${res.affectedRows}`)
-        runSearch();
-      });
-    });
-  }
+      let chosenDep;
+
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].name === answer.department) {
+          chosenDep = res[i]
+        }
+      }
+      
+      const query = connection.query(
+        'insert into roles set ?', {
+          title: answer.title,
+          salary: answer.salary,
+          dep_id: chosenDep.id
+        },
+        (err, result) => {
+          if (err) throw err;
+          console.log('Added Role!!');
+          console.table(result);
+          runSearch();
+        }
+      )
+    })
+  })
+}
+
+function addEmployee() {
+  connection.query('select * from roles', (err, res) => {
+    if(err) throw err;
+
+    inquirer
+    .prompt([{
+        name: 'first_name',
+        type: 'input',
+        message: "What is the employee's first name?"
+      },
+      {
+        name: 'last_name',
+        type: 'input',
+        message: "What is the employee's last name?"
+      },
+      {
+        name: 'role',
+        type: 'list',
+        message: "What is the employee's role?",
+        choices: () => {
+          const arr = [];
+
+          for (let i = 0; i < res.length; i++) {
+            arr.push(res[i].title)
+          }
+          return arr; 
+        }
+      }
+    ]).then(function(answers) {
+      let role;
+
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].role === answers.role) {
+          role = res[i]
+        }
+      }
+
+      const query = connection.query(
+        'insert into employee set ?', {
+          first_name: answers.first_name,
+          last_name: answers.last_name,
+          role_id: role.id
+        },
+        (err, results) => {
+          if (err) throw err;
+          console.table(results);
+          console.log('Employee Added')
+        }
+      )
+      runSearch();
+    })
+  })
+}
+
+function updateEmployee() {
+  connection.query('select * from employee', (err, res) => {
+  inquirer
+    .prompt([{
+      name: 'employee',
+      type: 'list',
+      message: 'Choose an Employee',
+      choices: () => {
+        const arr = [];
+        for (let i = 0; i < res.length; i++) {
+          arr.push(res[i].first_name && res[i].last_name)
+        }
+        return arr; 
+      }
+    }]).then(function(data) {
+      let chosenEmp;
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].first_name && res[i].last_name === data.employee) {
+          chosenEmp = res[i];
+        }
+      }
+      connection.query('select * from roles', (err ,res) => {
+        if (err) throw err; 
+        
+        inquirer
+        .prompt([{
+          name: 'role',
+          type: 'list',
+          message: "What is the Employee's new role?",
+          choices: () => {
+            const arr = [];
+            for (let i = 0; i < res.length; i++) {
+              arr.push(res[i].title) 
+            }
+            return arr;
+          }
+        }]).then(function(data) {
+          let role;
+          for (let i = 0; i < res.length; i++) {
+            if( res[i].title === data.role) {
+              role = res[i];
+            }
+          }
+          
+          const query = connection.query('update employee set ? where ?', 
+          [
+            {
+            role_id: role.id
+            },
+            {
+            employee_id: chosenEmp.id
+            }
+          ], (err) => {
+            if (err) throw err;
+            console.log('Updated Employee');
+            runSearch();
+          })
+        })
+      })
+    })
+  })
+}
   
 

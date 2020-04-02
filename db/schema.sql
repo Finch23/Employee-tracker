@@ -10,7 +10,7 @@ create table department(
     primary key(dep_id)
 );
 
-create table role (
+create table roles (
 	role_id int auto_increment,
     title varchar(30) null,
     salary decimal(10, 4),
