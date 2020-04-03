@@ -15,3 +15,4 @@
 
 
 ## Screenshots
+<img src = './screenshots/Capture.PNG'>
