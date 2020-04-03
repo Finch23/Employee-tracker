@@ -5,6 +5,7 @@
 1. Description
 2. Installation
 3. Screenshots
+4. Liscense
 
 ## Description
 ### This is a command line application that lets the user add and manage the employees, roles and departments of a company.
@@ -16,3 +17,6 @@
 
 ## Screenshots
 <img src = './screenshots/Capture.PNG'>
+
+## Liscense
+<strong>MIT Copyright. All rights reserved
