@@ -4,18 +4,14 @@
 ## Table of Contents
 1. Description
 2. Installation
-3. Usage
-4. Screenshots
+3. Screenshots
 
 ## Description
 ### This is a command line application that lets the user add and manage the employees, roles and departments of a company.
 
 ## Installation
-
-
-
-## Usage
-
+1. npm init -y
+2. npm i mysql inquirer
 
 
 ## Screenshots
