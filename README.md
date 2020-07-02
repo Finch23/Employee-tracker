@@ -8,7 +8,7 @@
 4. Liscense
 
 ## Description
-### This is a command line application that lets the user add and manage the employees, roles and departments of a company.
+## This is a command line application that lets the user add and manage the employees, roles and departments of a company.
 
 ## Installation
 1. npm init -y
